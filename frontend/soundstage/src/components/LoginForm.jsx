@@ -1,5 +1,6 @@
-
-import React from 'react';
+import React from "react";
+import SignupPage from "../pages/Signup";
+import { Link } from "react-router-dom";
 
 function LoginForm(props) {
   return (
@@ -17,14 +18,16 @@ function LoginForm(props) {
                         style={{ width: "185px" }}
                         alt="logo"
                       />
-                      <h4 className="mt-1 mb-5 pb-1">Please login to your account</h4>
+                      <h4 className="mt-1 mb-5 pb-1">
+                      Please login to your account
+                      </h4>
                     </div>
 
                     <form>
                       <h2></h2>
 
                       <div className="form-outline mb-4">
-                      <label className="form-label" htmlFor="form2Example11">
+                        <label className="form-label" htmlFor="form2Example11">
                           Username
                         </label>
                         <input
@@ -32,17 +35,17 @@ function LoginForm(props) {
                           id="form2Example11"
                           className="form-control"
                           placeholder="Enter Phone number or email address"
-                        /> 
+                        />
                       </div>
                       <div className="form-outline mb-4">
-                      <label className="form-label" htmlFor="form2Example22">
+                        <label className="form-label" htmlFor="form2Example22">
                           Password
                         </label>
                         <input
                           type="password"
                           id="form2Example22"
                           className="form-control"
-                          placeholder='Enter Password'
+                          placeholder="Enter Password"
                         />
                       </div>
                       <div className="text-center pt-1 mb-5 pb-1">
@@ -52,19 +55,13 @@ function LoginForm(props) {
                         >
                           Log in
                         </button>
-                        <a className="text-muted" href="#!">
-                          Forgot password?
-                        </a>
+                        <a className="text-muted" href="#!"></a>
                       </div>
-
                       <div className="d-flex align-items-center justify-content-center pb-4">
                         <p className="mb-0 me-2">Don't have an account?</p>
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger"
-                        >
+                        <Link to="/Signup" className="btn btn-outline-danger">
                           Create new
-                        </button>
+                        </Link>
                       </div>
                     </form>
                   </div>
@@ -79,6 +76,3 @@ function LoginForm(props) {
 }
 
 export default LoginForm;
-
-
-

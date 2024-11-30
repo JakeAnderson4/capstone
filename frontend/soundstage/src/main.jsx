@@ -9,7 +9,9 @@ import { LocationProvider } from "./context/LocationContext"; // Import your Loc
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <LocationProvider>
+        <App />
+      </LocationProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

@@ -1,16 +1,26 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
-export const LocationContext = createContext();
+const LocationContext = createContext();
 
 export const LocationProvider = ({ children }) => {
+  const [locations, setLocations] = useState([]);
+
+  const addLocation = (location) => {
+    setLocations((prev) => [...prev, location]);
+  };
+
   return (
-    <LocationContext.Provider value={{}}>
+    <LocationContext.Provider value={{ locations, addLocation }}>
       {children}
     </LocationContext.Provider>
   );
 };
 
-// Add this custom hook for consuming the context
 export const useLocations = () => {
-  return useContext(LocationContext);
+  const context = useContext(LocationContext);
+  if (!context) {
+    throw new Error("useLocations must be used within a LocationProvider");
+  }
+  return context;
 };
+

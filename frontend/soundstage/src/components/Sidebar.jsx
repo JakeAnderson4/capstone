@@ -13,6 +13,19 @@ const Sidebar = () => {
         <LocationCard key={location.id} location={location} />
       ))}
     </aside>
+
+    /*
+    
+    <div>
+      <h3>Saved Locations</h3>
+      <ul>
+        {locations.map((loc, index) => (
+          <li key={index}>{loc.name}</li>
+        ))}
+      </ul>
+    </div>
+    
+    */
   );
 };
 
