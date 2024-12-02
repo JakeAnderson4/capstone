@@ -1,16 +1,40 @@
 import Event from '../models/event.js';
 import { validationResult } from 'express-validator'; // Add validation if needed
+import { Op } from 'sequelize';
 
-// Fetch all events with pagination
 const getAllEvents = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const location = req.query.location ? req.query.location.trim() : null;
+  const page = parseInt(req.query.page) || 1; // Default page = 1
+  const limit = parseInt(req.query.limit) || 10; // Default limit = 10
+
+  if (!location) {
+    return res.status(400).json({ error: 'Location is required' });
+  }
+
+  console.log('Received location query:', location); // Debug log
 
   try {
     const { count, rows: events } = await Event.findAndCountAll({
+      where: {
+        Location: { [Op.like]: `%${location}%` },
+      },
+      attributes: [
+        'EventID',
+        'Name',
+        'Location',
+        'url',
+        'start',
+        'end',
+      ],
       offset: (page - 1) * limit,
       limit: limit,
     });
+
+    console.log('Fetched events:', events); // Debug log
+
+    if (events.length === 0) {
+      return res.status(404).json({ error: 'No events found for the given location' });
+    }
 
     res.json({
       currentPage: page,
@@ -19,9 +43,11 @@ const getAllEvents = async (req, res) => {
       events,
     });
   } catch (error) {
+    console.error('Error fetching events:', error); // Log the exact error
     res.status(500).json({ error: 'Error fetching events' });
   }
 };
+
 
 // Fetch a single event by ID
 const getEventById = async (req, res) => {

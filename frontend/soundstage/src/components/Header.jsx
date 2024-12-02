@@ -1,55 +1,38 @@
 import React, { useState } from "react";
 
-const Header = ({ onLocationChange }) => {
+const Header = ({ onSearch, onLocationChange }) => {
   const [query, setQuery] = useState("");
 
-  const onSearch = async () => {
+  const onSearchHandler = async () => {
     if (!query.trim()) {
       alert("Please enter a location to search.");
       return;
     }
 
-    console.log("Search initiated for:", query);
-
-    const API_URL = `https://www.eventbriteapi.com/v3/events/search/?location.address=${encodeURIComponent(
-      query
-    )}&page_size=10&start_date.range_start=${new Date().toISOString()}&token=WDTQIRBUMSTATX23WNSJ`;
-
     try {
-      const response = await fetch(API_URL);
-
+      // Fetch events from the backend
+      const response = await fetch(
+        `http://localhost:5000/api/events?location=${encodeURIComponent(query)}`
+      );
       if (!response.ok) {
-        if (response.status === 404) {
-          console.warn("No events found for this location.");
-          alert("No events found. Please refine your search.");
-          return;
-        }
-        throw new Error(`API request failed with status: ${response.status}`);
+        throw new Error("Failed to fetch events");
       }
 
       const data = await response.json();
 
       if (!data.events || data.events.length === 0) {
-        console.warn("No events found in the API response.");
-        alert("No events found. Please refine your search.");
+        alert("No events found for this location.");
         return;
       }
 
       console.log("Search results:", data.events);
-
-      // Map and pass event data to the parent component
-      const mappedEvents = data.events.map((event) => ({
-        name: event.name?.text || "No title available",
-        description: event.description?.text || "No description available",
-        latitude: event.venue?.latitude || null,
-        longitude: event.venue?.longitude || null,
-        url: event.url || "#",
-      }));
-
-      onLocationChange(mappedEvents); // Update the locations in the parent
+      onLocationChange(data.events); // Pass data to parent component
+      if (onSearch) {
+        onSearch(query.trim()); // Update search state in the parent if provided
+      }
     } catch (error) {
-      console.error("Error during search:", error);
-      alert("An error occurred while searching. Please try again later.");
+      console.error("Error fetching events:", error);
+      alert("An error occurred while searching. Please try again.");
     }
   };
 
@@ -57,11 +40,11 @@ const Header = ({ onLocationChange }) => {
     <header className="header">
       <input
         type="text"
-        placeholder="Search for a location in Australia..."
+        placeholder="Search for a location..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <button onClick={onSearch}>Search</button>
+      <button onClick={onSearchHandler}>Search</button>
     </header>
   );
 };

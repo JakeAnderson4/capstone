@@ -7,7 +7,7 @@ import Map from "../components/Map.jsx";
 const Home = () => {
   return (
     <div className="home">
-      <Header />
+      <Header onLocationChange={(mappedEvents) => console.log(mappedEvents)} />
       <div className="content">
         <Sidebar />
         <Map />
