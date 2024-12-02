@@ -5,7 +5,7 @@ const fetchEventbriteData = async () => {
   const params = {
     q: "music", // Search keyword
     "location.address": "New York", // Location filter
-    token: "YOUR_API_KEY" // Replace with your API key
+    token: "WDTQIRBUMSTATX23WNSJ" // Replace with your API key
   };
 
   try {

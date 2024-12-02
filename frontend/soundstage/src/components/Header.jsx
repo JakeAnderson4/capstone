@@ -3,39 +3,12 @@ import React, { useState } from "react";
 const Header = ({ onLocationChange }) => {
   const [query, setQuery] = useState("");
 
-  const useDummyData = () => {
-    const dummyEvents = [
-      {
-        name: { text: "Sample Event 1" },
-        description: { text: "This is a sample event description." },
-        venue: { latitude: -33.8688, longitude: 151.2093 },
-        url: "https://example.com/event1",
-      },
-      {
-        name: { text: "Sample Event 2" },
-        description: { text: "Another sample event description." },
-        venue: { latitude: -34.9285, longitude: 138.6007 },
-        url: "https://example.com/event2",
-      },
-    ];
+  const onSearch = async () => {
+    if (!query.trim()) {
+      alert("Please enter a location to search.");
+      return;
+    }
 
-    console.log("Using dummy data:", dummyEvents);
-    displayEvents(dummyEvents);
-  };
-
-  const displayEvents = (events) => {
-    const mappedEvents = events.map((event) => ({
-      name: event.name.text,
-      description: event.description.text,
-      latitude: event.venue.latitude,
-      longitude: event.venue.longitude,
-      url: event.url || "#",
-    }));
-    console.log("Displaying events:", mappedEvents);
-    onLocationChange(mappedEvents); // Pass processed events to parent component
-  };
-
-  const onSearch = async (query) => {
     console.log("Search initiated for:", query);
 
     const API_URL = `https://www.eventbriteapi.com/v3/events/search/?location.address=${encodeURIComponent(
@@ -48,8 +21,8 @@ const Header = ({ onLocationChange }) => {
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("No events found for this location.");
-          alert("No events found. Showing sample data.");
-          return useDummyData();
+          alert("No events found. Please refine your search.");
+          return;
         }
         throw new Error(`API request failed with status: ${response.status}`);
       }
@@ -58,24 +31,26 @@ const Header = ({ onLocationChange }) => {
 
       if (!data.events || data.events.length === 0) {
         console.warn("No events found in the API response.");
-        return useDummyData();
+        alert("No events found. Please refine your search.");
+        return;
       }
 
       console.log("Search results:", data.events);
-      displayEvents(data.events);
+
+      // Map and pass event data to the parent component
+      const mappedEvents = data.events.map((event) => ({
+        name: event.name?.text || "No title available",
+        description: event.description?.text || "No description available",
+        latitude: event.venue?.latitude || null,
+        longitude: event.venue?.longitude || null,
+        url: event.url || "#",
+      }));
+
+      onLocationChange(mappedEvents); // Update the locations in the parent
     } catch (error) {
       console.error("Error during search:", error);
-      alert("An error occurred while searching. Showing sample data.");
-      useDummyData();
+      alert("An error occurred while searching. Please try again later.");
     }
-  };
-
-  const handleSearch = () => {
-    if (!query.trim()) {
-      alert("Please enter a location to search.");
-      return;
-    }
-    onSearch(query);
   };
 
   return (
@@ -86,7 +61,7 @@ const Header = ({ onLocationChange }) => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <button onClick={handleSearch}>Search</button>
+      <button onClick={onSearch}>Search</button>
     </header>
   );
 };
