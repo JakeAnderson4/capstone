@@ -1,30 +1,38 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import { DataTypes } from 'sequelize';
+import sequelize from '../database.js'; // Import your Sequelize instance
 
-const Event = sequelize.define("Event", {
+const Event = sequelize.define('Event', {
+  event_id: {
+    type: DataTypes.STRING,
+    primaryKey: true,
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   description: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
+    allowNull: true,
   },
-  date: {
+  start_time: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  end_time: {
     type: DataTypes.DATE,
     allowNull: false,
   },
   location: {
     type: DataTypes.STRING,
+    allowNull: true,
   },
-  apiProviderId: {
-    type: DataTypes.STRING, // Eventbrite ID
+  latitude: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
   },
-  venueId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: "Venues", // Reference your `Venue` table
-      key: "id",
-    },
+  longitude: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
   },
 });
 

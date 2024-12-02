@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 function SignupPage() {
   const [email, setEmail] = useState("");
@@ -12,96 +13,11 @@ function SignupPage() {
       return;
     }
     console.log("Signup with:", { email, password });
-    // Add your signup logic here
+    // Add your signup logic here (API call)
   };
 
   return (
-    
-    <div style={styles.container}>
-      <form style={styles.form} onSubmit={handleSignup}>
-        <h2 style={styles.title}>Sign Up</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={styles.input}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          style={styles.input}
-          required
-        />
-        <button type="submit" style={styles.button}>
-          Sign Up
-        </button>
-      </form>
-    </div>
-
-
-
-
-
-
-  );
-}
-
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#f3f4f6",
-  },
-  form: {
-    backgroundColor: "#fff",
-    padding: "2rem",
-    borderRadius: "8px",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-    width: "300px",
-    textAlign: "center",
-  },
-  title: {
-    marginBottom: "1.5rem",
-  },
-  input: {
-    width: "100%",
-    padding: "0.75rem",
-    margin: "0.5rem 0",
-    border: "1px solid #ddd",
-    borderRadius: "4px",
-  },
-  button: {
-    width: "100%",
-    padding: "0.75rem",
-    backgroundColor: "#4CAF50",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-};
-
-
-
-export default SignupPage;
-
-/*
-
-<section className="h-100 gradient-form">
+    <section className="h-100 gradient-form">
       <div className="container py-5 h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-xl-10">
@@ -116,51 +32,75 @@ export default SignupPage;
                         alt="logo"
                       />
                       <h4 className="mt-1 mb-5 pb-1">
-                      Please login to your account
+                        Please sign up for your account
                       </h4>
                     </div>
 
-                    <form>
-                      <h2></h2>
-
+                    <form onSubmit={handleSignup}>
                       <div className="form-outline mb-4">
-                        <label className="form-label" htmlFor="form2Example11">
-                          Username
+                        <label className="form-label" htmlFor="signupEmail">
+                          Email
                         </label>
                         <input
                           type="email"
-                          id="form2Example11"
+                          id="signupEmail"
                           className="form-control"
-                          placeholder="Enter Phone number or email address"
+                          placeholder="Enter Email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
                         />
                       </div>
+
                       <div className="form-outline mb-4">
-                        <label className="form-label" htmlFor="form2Example22">
+                        <label className="form-label" htmlFor="signupPassword">
                           Password
                         </label>
                         <input
                           type="password"
-                          id="form2Example22"
+                          id="signupPassword"
                           className="form-control"
                           placeholder="Enter Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
                         />
                       </div>
+
+                      <div className="form-outline mb-4">
+                        <label
+                          className="form-label"
+                          htmlFor="signupConfirmPassword"
+                        >
+                          Confirm Password
+                        </label>
+                        <input
+                          type="password"
+                          id="signupConfirmPassword"
+                          className="form-control"
+                          placeholder="Confirm Password"
+                          value={confirmPassword}
+                          onChange={(e) =>
+                            setConfirmPassword(e.target.value)
+                          }
+                          required
+                        />
+                      </div>
+
                       <div className="text-center pt-1 mb-5 pb-1">
                         <button
-                          type="button"
+                          type="submit"
                           className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3"
                         >
-                          Log in
+                          Sign Up
                         </button>
-                        <a className="text-muted" href="#!"></a>
+                        
                       </div>
-                      <div className="d-flex align-items-center justify-content-center pb-4">
-                        <p className="mb-0 me-2">Don't have an account?</p>
-                        <Link to="/Signup" className="btn btn-outline-danger">
-                          Create new
-                        </Link>
-                      </div>
+                      
                     </form>
+                    <Link to="/" className="btn btn-outline-danger">
+                          Login here
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -169,5 +109,7 @@ export default SignupPage;
         </div>
       </div>
     </section>
+  );
+}
 
-*/
+export default SignupPage;

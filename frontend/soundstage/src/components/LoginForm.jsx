@@ -34,7 +34,7 @@ function LoginForm(props) {
                           type="email"
                           id="form2Example11"
                           className="form-control"
-                          placeholder="Enter Phone number or email address"
+                          placeholder="Enter Email Address"
                         />
                       </div>
                       <div className="form-outline mb-4">
