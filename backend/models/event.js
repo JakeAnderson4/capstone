@@ -1,37 +1,66 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../database.js'; // Import your Sequelize instance
+import sequelize from '../config/database.js';
 
 const Event = sequelize.define('Event', {
-  event_id: {
-    type: DataTypes.STRING,
+  EventID: {
+    type: DataTypes.INTEGER,
     primaryKey: true,
+    autoIncrement: true,
   },
-  name: {
-    type: DataTypes.STRING,
+  Name: {
+    type: DataTypes.STRING(150),
     allowNull: false,
   },
-  description: {
-    type: DataTypes.TEXT,
+  Date: {
+    type: DataTypes.DATEONLY,
     allowNull: true,
   },
-  start_time: {
-    type: DataTypes.DATE,
-    allowNull: false,
+  Time: {
+    type: DataTypes.TIME,
+    allowNull: true,
   },
-  end_time: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  location: {
+  Location: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  latitude: {
-    type: DataTypes.FLOAT,
+  summary: {
+    type: DataTypes.STRING(255),
     allowNull: true,
   },
-  longitude: {
-    type: DataTypes.FLOAT,
+  url: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  start: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  end: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  created_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  published_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  status: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+  },
+  currency: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+  },
+  is_online: {
+    type: DataTypes.BOOLEAN,
     allowNull: true,
   },
 });

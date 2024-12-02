@@ -1,6 +1,10 @@
 import express from 'express';
 import { fetchUserProfile, modifyUserProfile, removeUserProfile } from './controllers/userController.js';
 import { authenticateToken } from './middleware/auth.js';
+import { registerUser, loginUser, validateRegister } from '../controllers/authController.js';
+
+authRouter.post('/register', validateRegister, registerUser);
+authRouter.post('/login', loginUser);
 
 const router = express.Router();
 

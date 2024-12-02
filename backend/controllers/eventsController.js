@@ -1,14 +1,29 @@
 import Event from '../models/event.js';
+import { validationResult } from 'express-validator'; // Add validation if needed
 
+// Fetch all events with pagination
 const getAllEvents = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
   try {
-    const events = await Event.findAll();
-    res.json(events);
+    const { count, rows: events } = await Event.findAndCountAll({
+      offset: (page - 1) * limit,
+      limit: limit,
+    });
+
+    res.json({
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+      totalEvents: count,
+      events,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Error fetching events' });
   }
 };
 
+// Fetch a single event by ID
 const getEventById = async (req, res) => {
   try {
     const event = await Event.findByPk(req.params.id);
@@ -19,7 +34,13 @@ const getEventById = async (req, res) => {
   }
 };
 
+// Create a new event
 const createEvent = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const { name, date, location } = req.body;
     const newEvent = await Event.create({ name, date, location });
@@ -29,6 +50,7 @@ const createEvent = async (req, res) => {
   }
 };
 
+// Update an existing event
 const updateEvent = async (req, res) => {
   try {
     const event = await Event.findByPk(req.params.id);
@@ -41,6 +63,7 @@ const updateEvent = async (req, res) => {
   }
 };
 
+// Delete an event
 const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findByPk(req.params.id);
@@ -54,4 +77,3 @@ const deleteEvent = async (req, res) => {
 };
 
 export { getAllEvents, getEventById, createEvent, updateEvent, deleteEvent };
-

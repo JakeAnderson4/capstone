@@ -1,8 +1,56 @@
-import React from "react";
-import SignupPage from "../pages/Signup";
-import { Link } from "react-router-dom";
+// src/components/LoginForm.jsx
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
-function LoginForm(props) {
+const LoginForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  // Define onLogin function within this component
+  const onLogin = async (email, password) => {
+    console.log("onLogin called with:", email, password); // Debugging log
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      console.log("Fetch response status:", response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Login successful, token received:", data.token);
+
+        // You can store the token in localStorage/sessionStorage here if needed
+        // localStorage.setItem("authToken", data.token);
+
+        navigate("/home"); // Navigate to the Home page
+      } else {
+        const errorData = await response.json();
+        console.error("Login failed:", errorData);
+        alert(errorData.error || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred. Please try again later.");
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted with:", email, password); // Debugging log
+
+    if (email && password) {
+      onLogin(email, password); // Call the onLogin function
+    } else {
+      console.error("Email and password must not be empty.");
+    }
+  };
+
   return (
     <section className="h-100 gradient-form">
       <div className="container py-5 h-100">
@@ -18,51 +66,51 @@ function LoginForm(props) {
                         style={{ width: "185px" }}
                         alt="logo"
                       />
-                      <h4 className="mt-1 mb-5 pb-1">
-                      Please login to your account
-                      </h4>
+                      <h4 className="mt-1 mb-5 pb-1">Please login to your account</h4>
                     </div>
 
-                    <form>
-                      <h2></h2>
-
+                    <form onSubmit={handleSubmit}>
                       <div className="form-outline mb-4">
-                        <label className="form-label" htmlFor="form2Example11">
-                          Username
+                        <label className="form-label" htmlFor="loginEmail">
+                          Email
                         </label>
                         <input
                           type="email"
-                          id="form2Example11"
+                          id="loginEmail"
                           className="form-control"
-                          placeholder="Enter Email Address"
+                          placeholder="Enter Email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
                         />
                       </div>
+
                       <div className="form-outline mb-4">
-                        <label className="form-label" htmlFor="form2Example22">
+                        <label className="form-label" htmlFor="loginPassword">
                           Password
                         </label>
                         <input
                           type="password"
-                          id="form2Example22"
+                          id="loginPassword"
                           className="form-control"
                           placeholder="Enter Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
                         />
                       </div>
+
                       <div className="text-center pt-1 mb-5 pb-1">
                         <button
-                          type="button"
+                          type="submit"
                           className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3"
                         >
-                          Log in
+                          Login
                         </button>
-                        <a className="text-muted" href="#!"></a>
                       </div>
-                      <div className="d-flex align-items-center justify-content-center pb-4">
-                        <p className="mb-0 me-2">Don't have an account?</p>
-                        <Link to="/Signup" className="btn btn-outline-danger">
-                          Create new
-                        </Link>
-                      </div>
+                      <Link to="/Signup" className="btn btn-outline-danger">
+                      Sign-up here
+                    </Link>
                     </form>
                   </div>
                 </div>
@@ -73,6 +121,6 @@ function LoginForm(props) {
       </div>
     </section>
   );
-}
+};
 
 export default LoginForm;

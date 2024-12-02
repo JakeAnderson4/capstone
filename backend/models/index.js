@@ -1,7 +1,6 @@
-
-import User from "./user.js";
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
+import User from "./user.js"; // Import the User model
 
 dotenv.config();
 
@@ -12,23 +11,21 @@ const sequelize = new Sequelize(
     {
         host: process.env.DB_HOST,
         dialect: "mysql",
+        logging: false, // Optional: Disable logging SQL queries to the console
     }
 );
 
+// Initialize models
+User.initModel(sequelize); // Ensure the User model is initialized
+
+// Test database connection
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log("Database connected successfully!");
+    } catch (error) {
+        console.error("Failed to connect to the database:", error.message);
+    }
+})();
+
 export default sequelize;
-
-
-/*
-import sequelize from "../config/database.js"; // Adjust path to your database config
-import User from "./user.js"; // Import the User model
-
-// Initialize all models
-const db = {
-  sequelize,
-  Sequelize,
-  User, // Add User here
-};
-
-export default db;
-
-*/

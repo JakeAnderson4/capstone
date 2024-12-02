@@ -1,53 +1,71 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { body, validationResult } from 'express-validator';
 import User from '../models/user.js';
-import sequelize from "../models/index.js";
-console.log(sequelize)
 
+// Validation middleware for registration
+export const validateRegister = [
+  body('email').isEmail().withMessage('Invalid email format'),
+  body('username').notEmpty().withMessage('Username is required'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+];
 
- export const registerUser = async (req, res) => {
+// Register a new user
+export const registerUser = async (req, res) => {
   try {
+    console.log('Register Request Body:', req.body); // Log the request body
     const { username, email, password } = req.body;
 
-    // Check if user exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) return res.status(400).json({ error: 'User already exists' });
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
     const newUser = await User.create({ username, email, password: hashedPassword });
 
     res.status(201).json({ message: 'User registered successfully', user: newUser });
   } catch (error) {
+    console.error('Error in registerUser:', error); // Log any errors
     res.status(500).json({ error: 'Error registering user' });
   }
 };
 
+// Login an existing user
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+      console.log("Login Request Body:", req.body);
 
-    // Find the user
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ error: 'User not found' });
+      const { email, password } = req.body;
 
-    // Compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
+      if (!email || !password) {
+          console.error("Missing email or password");
+          return res.status(400).json({ error: "Email and password are required" });
+      }
 
-    // Generate a JWT
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      // Check if the user exists
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+          console.error("User not found");
+          return res.status(404).json({ error: "User not found" });
+      }
 
-    res.status(200).json({ message: 'Login successful', token });
+      // Compare passwords
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+          console.error("Invalid credentials");
+          return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      // Generate a JWT
+      const token = jwt.sign({ id: user.UserID }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      console.log("JWT Token Generated:", token);
+
+      res.status(200).json({ message: "Login successful", token });
   } catch (error) {
-    res.status(500).json({ error: 'Error logging in' });
+      console.error("Error logging in:", error.message);
+      res.status(500).json({ error: "Error logging in" });
   }
 };
 
-
-//export { registerUser, loginUser };
-
-export default registerUser;
-
+// Export the functions
+export default { registerUser, loginUser, validateRegister };

@@ -11,7 +11,6 @@ const Home = () => {
       <div className="content">
         <Sidebar />
         <Map />
-        <h1>worksssssssssssss</h1>
       </div>
     </div>
   );
