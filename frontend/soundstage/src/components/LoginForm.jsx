@@ -66,7 +66,9 @@ const LoginForm = () => {
                         style={{ width: "185px" }}
                         alt="logo"
                       />
-                      <h4 className="mt-1 mb-5 pb-1">Please login to your account</h4>
+                      <h4 className="mt-1 mb-5 pb-1">
+                        Please login to your account
+                      </h4>
                     </div>
 
                     <form onSubmit={handleSubmit}>
@@ -109,8 +111,8 @@ const LoginForm = () => {
                         </button>
                       </div>
                       <Link to="/Signup" className="btn btn-outline-danger">
-                      Sign-up here
-                    </Link>
+                        Sign-up here
+                      </Link>
                     </form>
                   </div>
                 </div>

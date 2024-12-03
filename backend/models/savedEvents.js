@@ -1,30 +1,27 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import { DataTypes } from 'sequelize';
 
-const SavedEvent = sequelize.define("SavedEvent", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: "Users", // Table name for the User model
-      key: "id", // Primary key in the User model
-    },
-    onDelete: "CASCADE", // Delete saved events if the user is deleted
-  },
-  eventId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: "Events", // Table name for the Event model
-      key: "id", // Primary key in the Event model
-    },
-    onDelete: "CASCADE", // Delete saved events if the associated event is deleted
-  },
-});
 
-export default SavedEvent;
+export default(sequelize) => {
+  return sequelize.define(
+  'SavedEvent',
+  {
+    UserID: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+    },
+    EventID: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+    },
+    IsFavorite: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+  },
+  {
+    tableName: 'saved_events', // Match table name in the database
+    timestamps: false, // Disable timestamps
+  }
+);
+};
+

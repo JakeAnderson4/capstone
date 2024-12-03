@@ -1,6 +1,7 @@
-import Event from '../models/event.js';
-import { validationResult } from 'express-validator'; // Add validation if needed
-import { Op } from 'sequelize';
+import Event from "../models/event.js";
+import Venue from "../models/venue.js"; // Import Venue model
+import { validationResult } from "express-validator";
+import { Op } from "sequelize";
 
 const getAllEvents = async (req, res) => {
   const location = req.query.location ? req.query.location.trim() : null;
@@ -8,55 +9,68 @@ const getAllEvents = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10; // Default limit = 10
 
   if (!location) {
-    return res.status(400).json({ error: 'Location is required' });
+    return res.status(400).json({ error: "Location is required" });
   }
 
-  console.log('Received location query:', location); // Debug log
+  console.log("Received location query:", location); // Debug log
 
   try {
     const { count, rows: events } = await Event.findAndCountAll({
       where: {
         Location: { [Op.like]: `%${location}%` },
       },
-      attributes: [
-        'EventID',
-        'Name',
-        'Location',
-        'url',
-        'start',
-        'end',
+      attributes: ["EventID", "Name", "Location", "url", "start", "end"],
+      include: [
+        {
+          model: Venue, // Use Venue model
+          attributes: ["latitude", "longitude"], // Fetch latitude and longitude
+          as: "venue", // Alias to match the defined association
+        },
       ],
       offset: (page - 1) * limit,
       limit: limit,
     });
 
-    console.log('Fetched events:', events); // Debug log
+    console.log("Fetched events:", events); // Debug log
 
     if (events.length === 0) {
-      return res.status(404).json({ error: 'No events found for the given location' });
+      return res.status(404).json({
+        error: "No events found for the given location",
+      });
     }
+
+    // Format the events to include latitude and longitude
+    const formattedEvents = events.map((event) => ({
+      EventID: event.EventID,
+      Name: event.Name,
+      Location: event.Location,
+      url: event.url,
+      start: event.start,
+      end: event.end,
+      latitude: event.venue?.latitude || null,
+      longitude: event.venue?.longitude || null,
+    }));
 
     res.json({
       currentPage: page,
       totalPages: Math.ceil(count / limit),
       totalEvents: count,
-      events,
+      events: formattedEvents,
     });
   } catch (error) {
-    console.error('Error fetching events:', error); // Log the exact error
-    res.status(500).json({ error: 'Error fetching events' });
+    console.error("Error fetching events:", error); // Log the exact error
+    res.status(500).json({ error: "Error fetching events" });
   }
 };
-
 
 // Fetch a single event by ID
 const getEventById = async (req, res) => {
   try {
     const event = await Event.findByPk(req.params.id);
-    if (!event) return res.status(404).json({ error: 'Event not found' });
+    if (!event) return res.status(404).json({ error: "Event not found" });
     res.json(event);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching event' });
+    res.status(500).json({ error: "Error fetching event" });
   }
 };
 
@@ -72,7 +86,7 @@ const createEvent = async (req, res) => {
     const newEvent = await Event.create({ name, date, location });
     res.status(201).json(newEvent);
   } catch (error) {
-    res.status(500).json({ error: 'Error creating event' });
+    res.status(500).json({ error: "Error creating event" });
   }
 };
 
@@ -80,12 +94,12 @@ const createEvent = async (req, res) => {
 const updateEvent = async (req, res) => {
   try {
     const event = await Event.findByPk(req.params.id);
-    if (!event) return res.status(404).json({ error: 'Event not found' });
+    if (!event) return res.status(404).json({ error: "Event not found" });
 
     const updatedEvent = await event.update(req.body);
     res.json(updatedEvent);
   } catch (error) {
-    res.status(500).json({ error: 'Error updating event' });
+    res.status(500).json({ error: "Error updating event" });
   }
 };
 
@@ -93,12 +107,12 @@ const updateEvent = async (req, res) => {
 const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findByPk(req.params.id);
-    if (!event) return res.status(404).json({ error: 'Event not found' });
+    if (!event) return res.status(404).json({ error: "Event not found" });
 
     await event.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting event' });
+    res.status(500).json({ error: "Error deleting event" });
   }
 };
 

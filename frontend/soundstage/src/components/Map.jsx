@@ -6,7 +6,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import Header from "./Header";
-import ResultsCard from "./ResultsCard"; // Import ResultsCard if used
+import ResultsCard from "./ResultsCard";
 
 // Fix marker icon issues
 delete L.Icon.Default.prototype._getIconUrl;
@@ -17,62 +17,63 @@ L.Icon.Default.mergeOptions({
 });
 
 const Map = () => {
-  const [locations, setLocations] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("Perth");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [locations, setLocations] = useState([]); // Fetched locations
+  const [searchQuery, setSearchQuery] = useState("Perth"); // Default query
+  const [error, setError] = useState(null); // Error handling
+  const [loading, setLoading] = useState(false); // Loading state
 
   // Fetch locations from API
   const fetchLocations = async (query) => {
     setError(null);
     setLoading(true);
-  
+
     try {
       const response = await fetch(
-        `https://www.eventbriteapi.com/v3/events/search/?location.address=${encodeURIComponent(query)}&page_size=10&start_date.range_start=${new Date().toISOString()}&token=WDTQIRBUMSTATX23WNSJ`
+        `http://localhost:5000/api/events?location=${encodeURIComponent(query)}`
       );
-  
+
       if (!response.ok) {
-        if (response.status === 404) {
-          console.warn("No events found for the given location.");
-          setLocations([]);
-          return;
-        }
-        throw new Error(`Eventbrite API responded with status ${response.status}`);
+        throw new Error(`Failed to fetch events: ${response.status}`);
       }
-  
+
       const data = await response.json();
-  
+      console.log("Fetched data from API:", data);
+
       if (data.events && data.events.length > 0) {
-        const mappedLocations = data.events
-          .filter(
-            (event) =>
-              event.venue &&
-              event.venue.latitude &&
-              event.venue.longitude
-          )
-          .map((event) => ({
-            latitude: parseFloat(event.venue.latitude),
-            longitude: parseFloat(event.venue.longitude),
-            name: event.name.text,
-            description: event.description?.text || "No description available",
-            url: event.url,
-          }));
-  
-        setLocations(mappedLocations);
+        // Map the locations properly
+        const mappedLocations = data.events.map((event) => ({
+          latitude: parseFloat(event.latitude) || null,
+          longitude: parseFloat(event.longitude) || null,
+          name: event.Name,
+          description: event.description || "No description available",
+          url: event.url,
+          start: event.start,
+          end: event.end,
+        }));
+
+        console.log("Mapped locations:", mappedLocations);
+
+        // Filter valid locations
+        const validLocations = mappedLocations.filter(
+          (loc) => loc.latitude && loc.longitude
+        );
+
+        console.log("Valid locations:", validLocations);
+
+        setLocations(validLocations);
       } else {
-        console.warn("No events found in the API response.");
-        setLocations([]);
+        console.warn("No events found in API response.");
+        setLocations([]); // Clear locations if no data found
       }
     } catch (err) {
-      console.error("Error fetching Eventbrite data:", err.message);
+      console.error("Error fetching locations:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch on component mount and query update
+  // Fetch locations on component mount or query update
   useEffect(() => {
     fetchLocations(searchQuery);
   }, [searchQuery]);
@@ -82,18 +83,22 @@ const Map = () => {
     const map = useMap();
 
     useEffect(() => {
-      if (locations.length > 0) {
-        const bounds = locations.map((loc) => [loc.latitude, loc.longitude]);
+      const validLocations = locations.filter(
+        (loc) => loc.latitude !== null && loc.longitude !== null
+      );
+
+      if (validLocations.length > 0) {
+        const bounds = validLocations.map((loc) => [
+          loc.latitude,
+          loc.longitude,
+        ]);
         map.fitBounds(bounds);
+      } else {
+        console.warn("No valid map bounds available.");
       }
     }, [locations, map]);
 
     return null;
-  };
-
-  // Handle search input
-  const handleSearch = (query) => {
-    setSearchQuery(query);
   };
 
   return (
@@ -109,7 +114,7 @@ const Map = () => {
         {error && <p style={{ color: "red" }}>{error}</p>}
         {locations.length > 0 ? (
           locations.map((location, index) => (
-            <ResultsCard key={index} event={location.event} />
+            <ResultsCard key={index} event={location} />
           ))
         ) : (
           <p>No events found.</p>

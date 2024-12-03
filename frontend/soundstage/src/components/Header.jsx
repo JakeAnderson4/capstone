@@ -36,6 +36,8 @@ const Header = ({ onSearch, onLocationChange }) => {
     }
   };
 
+  
+
   return (
     <header className="header">
       <input

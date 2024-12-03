@@ -1,39 +1,10 @@
-/*
 import React from "react";
 
 const ResultsCard = ({ event }) => {
-  return (
-    <div className="results-card">
-      <h3>{event.Name}</h3>
-      <p>
-        <strong>Event ID:</strong> {event.EventID}
-      </p>
-      <p>
-        <strong>Location:</strong> {event.Location}
-      </p>
-      <p>
-        <strong>Start:</strong> {new Date(event.start).toLocaleString()}
-      </p>
-      <p>
-        <strong>End:</strong> {new Date(event.end).toLocaleString()}
-      </p>
-      <p>
-        <strong>URL:</strong>{" "}
-        <a href={event.url} target="_blank" rel="noopener noreferrer">
-          View Event
-        </a>
-      </p>
-    </div>
-  );
-};
+  if (!event) {
+    return <div>No event data available.</div>;
+  }
 
-export default ResultsCard;
-
-*/
-
-import React from "react";
-
-const ResultsCard = ({ event }) => {
   return (
     <div
       style={{
@@ -43,11 +14,19 @@ const ResultsCard = ({ event }) => {
         borderRadius: "5px",
       }}
     >
-      <h3>{event.Name}</h3>
-      <p><strong>Location:</strong> {event.Location}</p>
-      <p><strong>Start:</strong> {new Date(event.start).toLocaleString()}</p>
-      <p><strong>End:</strong> {new Date(event.end).toLocaleString()}</p>
-      <p><strong>Description:</strong> {event.description || "No description available"}</p>
+      <h3>{event.name}</h3>
+      <p>
+        <strong>Location:</strong> {event.Location || "Unknown"}
+      </p>
+      <p>
+        <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+      </p>
+      <p>
+        <strong>End:</strong> {new Date(event.end).toLocaleString()}
+      </p>
+      <p>
+        <strong>Description:</strong> {event.description}
+      </p>
       <a href={event.url} target="_blank" rel="noopener noreferrer">
         View Details
       </a>
@@ -56,4 +35,3 @@ const ResultsCard = ({ event }) => {
 };
 
 export default ResultsCard;
-
