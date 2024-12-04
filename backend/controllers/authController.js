@@ -1,7 +1,15 @@
+
+
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
-import User from '../models/user.js';
+//import User from '../models/user.js';
+import { db } from '../config/database.js'; // Import initialized models
+const { User } = db.models; // Access User model from initialized models
+
+
+
+
 
 // Validation middleware for registration
 export const validateRegister = [
@@ -66,6 +74,7 @@ export const loginUser = async (req, res) => {
       res.status(500).json({ error: "Error logging in" });
   }
 };
+
 
 // Export the functions
 export default { registerUser, loginUser, validateRegister };

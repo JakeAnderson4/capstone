@@ -1,10 +1,4 @@
-//import { Model, DataTypes } from "sequelize"; 
 import { DataTypes } from 'sequelize';
-
-/*
-import { db } from '../config/database.js'; // Default import
-const { sequelize } = db; // Destructure sequelize
-*/
 
 export default (sequelize) => {
   return sequelize.define(
@@ -35,12 +29,21 @@ export default (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      latitude: {
+        type: DataTypes.FLOAT,
+        allowNull: true, // Optional field
+      },
+      longitude: {
+        type: DataTypes.FLOAT,
+        allowNull: true, // Optional field
+      },
     },
     {
       sequelize,
       modelName: "Event",
       tableName: "Events",
-    }
+    },
+    
   );
 };
 
