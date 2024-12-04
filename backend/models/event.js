@@ -37,6 +37,10 @@ export default (sequelize) => {
         type: DataTypes.FLOAT,
         allowNull: true, // Optional field
       },
+      City: { // Match the "City" column name in the database
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
     {
       sequelize,

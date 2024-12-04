@@ -7,21 +7,21 @@ import {
   deleteVenue,
 } from '../controllers/venueController.js';
 
-const router = express.Router();
+const venueRouter = express.Router();
 
 // GET all venues
-router.get('/', getAllVenues);
+venueRouter.get('/', getAllVenues);
 
 // GET a single venue by ID
-router.get('/:id', getVenueById);
+venueRouter.get('/:id', getVenueById);
 
 // POST a new venue
-router.post('/', createVenue);
+venueRouter.post('/', createVenue);
 
 // PUT (update) an existing venue by ID
-router.put('/:id', updateVenue);
+venueRouter.put('/:id', updateVenue);
 
 // DELETE a venue by ID
-router.delete('/:id', deleteVenue);
+venueRouter.delete('/:id', deleteVenue);
 
-export default router;
+export default venueRouter;

@@ -33,6 +33,10 @@ export default (sequelize) => {
           type: DataTypes.INTEGER,
           allowNull: true,
         },
+        City: { // Match the "City" column name in the database
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
       },
       {
         tableName: 'venues', // Match table name in the database

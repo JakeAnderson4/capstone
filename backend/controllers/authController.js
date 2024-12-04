@@ -30,7 +30,8 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({ username, email, password: hashedPassword });
-
+    
+    console.log('New User ID:', newUser.UserID); // Log the user ID
     res.status(201).json({ message: 'User registered successfully', user: newUser });
   } catch (error) {
     console.error('Error in registerUser:', error); // Log any errors
@@ -75,6 +76,59 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// Update user details
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params; // Get user ID from the URL
+    const { username, email, password } = req.body; // Extract fields from the request body
+
+    // Find the user by ID
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update the user's details
+    const updates = {};
+    if (username) updates.username = username;
+    if (email) updates.email = email;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updates.password = hashedPassword;
+    }
+
+    await user.update(updates); // Update user in the database
+
+    res.status(200).json({ message: 'User updated successfully', user });
+  } catch (error) {
+    console.error('Error updating user:', error.message);
+    res.status(500).json({ error: 'Error updating user' });
+  }
+};
+
+
+// Delete a user
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params; // Get user ID from the URL
+
+    // Find the user by ID
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete the user from the database
+    await user.destroy();
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error.message);
+    res.status(500).json({ error: 'Error deleting user' });
+  }
+};
+
+
 
 // Export the functions
-export default { registerUser, loginUser, validateRegister };
+export default { registerUser, loginUser, validateRegister, deleteUser, updateUser };

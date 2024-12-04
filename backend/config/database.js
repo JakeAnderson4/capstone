@@ -26,6 +26,10 @@ const models = {
   SavedEvent: initSavedEvent(sequelize)
 };
 
+sequelize.sync()
+  .then(() => console.log('Database synced successfully'))
+  .catch((err) => console.error('Error syncing database:', err));
+
 export const db = { sequelize, models }; // Named export
 export default db;
 

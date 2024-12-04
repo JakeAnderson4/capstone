@@ -24,9 +24,6 @@ const LoginForm = () => {
         const data = await response.json();
         console.log("Login successful, token received:", data.token);
 
-        // You can store the token in localStorage/sessionStorage here if needed
-        // localStorage.setItem("authToken", data.token);
-
         navigate("/home"); // Navigate to the Home page
       } else {
         const errorData = await response.json();

@@ -1,4 +1,4 @@
-import { User } from '../models/index.js'; // Adjust the path as needed
+import User from '../models/user.js'; 
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 
@@ -7,6 +7,28 @@ import bcrypt from 'bcryptjs';
  * @param {Object} req - The Express request object.
  * @param {Object} res - The Express response object.
  */
+export const fetchAllUserProfiles = async (req, res) => {
+  try {
+    // Fetch all users excluding the sensitive `password_hash`
+    const users = await User.findAll({
+    });
+
+    // If no users are found, return a 404 response
+    if (!users || users.length === 0) {
+      return res.status(404).json({ error: 'No users found' });
+    }
+
+    // Return the list of users
+    res.status(200).json(users);
+  } catch (err) {
+    console.error(`Error fetching user profiles: ${err.message}`);
+    res.status(500).json({ error: 'Failed to retrieve user profiles' });
+  }
+};
+
+
+
+
 export const fetchUserProfile = async (req, res) => {
   try {
     const { user_id: userId } = req.user; // Assume `authenticateToken` middleware sets `req.user`

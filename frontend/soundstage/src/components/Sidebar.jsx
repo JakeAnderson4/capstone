@@ -14,18 +14,6 @@ const Sidebar = () => {
       ))}
     </aside>
 
-    /*
-    
-    <div>
-      <h3>Saved Locations</h3>
-      <ul>
-        {locations.map((loc, index) => (
-          <li key={index}>{loc.name}</li>
-        ))}
-      </ul>
-    </div>
-    
-    */
   );
 };
 

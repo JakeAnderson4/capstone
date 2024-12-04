@@ -3,65 +3,17 @@ import Venue from "../models/venue.js"; // Import Venue model
 import { validationResult } from "express-validator";
 import { Op } from "sequelize";
 
+// Fetch all events by ID
 const getAllEvents = async (req, res) => {
-  const location = req.query.location ? req.query.location.trim() : null;
-  const page = parseInt(req.query.page) || 1; // Default page = 1
-  const limit = parseInt(req.query.limit) || 10; // Default limit = 10
-
-  if (!location) {
-    return res.status(400).json({ error: "Location is required" });
-  }
-
-  console.log("Received location query:", location); // Debug log
-
   try {
-    const { count, rows: events } = await Event.findAndCountAll({
-      where: {
-        Location: { [Op.like]: `%${location}%` },
-      },
-      attributes: ["EventID", "Name", "Location", "url", "start", "end"],
-      include: [
-        {
-          model: Venue, // Use Venue model
-          attributes: ["latitude", "longitude"], // Fetch latitude and longitude
-          as: "venue", // Alias to match the defined association
-        },
-      ],
-      offset: (page - 1) * limit,
-      limit: limit,
-    });
-
-    console.log("Fetched events:", events); // Debug log
-
-    if (events.length === 0) {
-      return res.status(404).json({
-        error: "No events found for the given location",
-      });
-    }
-
-    // Format the events to include latitude and longitude
-    const formattedEvents = events.map((event) => ({
-      EventID: event.EventID,
-      Name: event.Name,
-      Location: event.Location,
-      url: event.url,
-      start: event.start,
-      end: event.end,
-      latitude: event.venue?.latitude || null,
-      longitude: event.venue?.longitude || null,
-    }));
-
-    res.json({
-      currentPage: page,
-      totalPages: Math.ceil(count / limit),
-      totalEvents: count,
-      events: formattedEvents,
-    });
+    const events = await Event.findAll();
+    res.json(events);
   } catch (error) {
-    console.error("Error fetching events:", error); // Log the exact error
-    res.status(500).json({ error: "Error fetching events" });
+    console.error('Error fetching events:', error);
+    res.status(500).json({ error: 'Failed to fetch events' });
   }
 };
+
 
 // Fetch a single event by ID
 const getEventById = async (req, res) => {

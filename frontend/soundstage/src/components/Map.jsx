@@ -29,7 +29,7 @@ const Map = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/events?location=${encodeURIComponent(query)}`
+        `http://localhost:5000/api/events?city=${encodeURIComponent(query)}`
       );
 
       if (!response.ok) {
